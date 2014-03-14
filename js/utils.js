@@ -2,5 +2,5 @@
  * Cepheus: utils.js
 **/
 !function ($) {
-    $('html').addClass('cepheus');
+	$('html').addClass('cepheus');
 }(window.jQuery);
