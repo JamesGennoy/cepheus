@@ -4,6 +4,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: ['dist'],
+    cssmin: {
+      cssmin: {
+        files: {
+          'dist/css/<%= pkg.name %>.min.css' : 'dist/css/<%= pkg.name %>.css'
+        }
+      }
+    },
     concat: {
       js : {
         files: {
@@ -19,7 +26,9 @@ module.exports = function(grunt) {
           {dest: 'dist/fonts/', src: 'bower_components/bootstrap/dist/fonts/*', expand: true, flatten: true},
           {dest: 'dist/js/', src: 'bower_components/bootstrap/dist/js/*', expand: true, flatten: true},
           // JQuery
-          {dest: 'dist/js/', src: 'bower_components/jquery/dist/*', expand: true, flatten: true}
+          {dest: 'dist/js/', src: 'bower_components/jquery/dist/*', expand: true, flatten: true},
+          // Modernizr
+          {dest: 'dist/js/', src: 'bower_components/modernizr/modernizr.js', expand: true, flatten: true}
         ]
       }
     },
@@ -50,20 +59,25 @@ module.exports = function(grunt) {
       js: {
         files: ['js/<%= pkg.name %>/*.js'],
         tasks: ['concat', 'uglify']
+      },
+      sass: {
+        files: ['sass/*'],
+        tasks: ['sass']
       }
     }
   });
 
   // Load the plugins
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-include-replace');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'sass', 'includereplace', 'copy']);
+  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'sass', 'cssmin', 'includereplace', 'copy']);
 
 };
