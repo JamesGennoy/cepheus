@@ -18,6 +18,15 @@ module.exports = function(grunt) {
         }
       }
     },
+    connect: {
+      server: {
+        options: {
+          port: 9001,
+          base: 'dist',
+          open: true
+        }
+      }
+    },
     copy: {
       copy: {
         files: [
@@ -56,13 +65,20 @@ module.exports = function(grunt) {
       }
     },
     watch: {
+      options: {
+        livereload: true,
+      },
+      html: {
+        files: ['**/*.html', '!dist/**'],
+        tasks: ['includereplace']
+      },
       js: {
         files: ['js/<%= pkg.name %>/*.js'],
         tasks: ['concat', 'uglify']
       },
       sass: {
         files: ['sass/*'],
-        tasks: ['sass']
+        tasks: ['sass', 'cssmin']
       }
     }
   });
@@ -70,6 +86,7 @@ module.exports = function(grunt) {
   // Load the plugins
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-sass');
@@ -78,6 +95,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-include-replace');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'sass', 'cssmin', 'includereplace', 'copy']);
+  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'sass', 'cssmin', 'includereplace', 'copy', 'connect', 'watch']);
 
 };
