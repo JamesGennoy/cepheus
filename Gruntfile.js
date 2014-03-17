@@ -6,9 +6,11 @@ module.exports = function(grunt) {
     clean: ['dist'],
     cssmin: {
       cssmin: {
-        files: {
-          'dist/css/<%= pkg.name %>.min.css' : 'dist/css/<%= pkg.name %>.css'
-        }
+        expand: true,
+        cwd: 'dist/css/',
+        src: ['*.css', '!*.min.css', '!bootstrap*.css'],
+        dest: 'dist/css/',
+        ext: '.min.css'
       }
     },
     concat: {
@@ -28,7 +30,13 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      copy: {
+      copycss: {
+        files: [
+          // CSS
+          {dest: 'dist/css/', src: 'css/*', expand: true, flatten: true}
+        ]
+      },
+      copylibs: {
         files: [
           // Bootstrap
           {dest: 'dist/css/', src: 'bower_components/bootstrap/dist/css/*', expand: true, flatten: true},
@@ -50,10 +58,10 @@ module.exports = function(grunt) {
         dest: 'dist/'
       }
     },
-    sass: {
+    compass: {
       sass: {
-        files: {
-          'dist/css/<%= pkg.name %>.css': 'sass/main.scss'
+        options: {
+          cssDir: 'dist/css'
         }
       }
     },
@@ -79,22 +87,26 @@ module.exports = function(grunt) {
       sass: {
         files: ['sass/*'],
         tasks: ['sass', 'cssmin']
+      },
+      css: {
+        files: ['css/*'],
+        tasks: ['copy:copycss', 'cssmin']
       }
     }
   });
 
   // Load the plugins
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-include-replace');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'sass', 'cssmin', 'includereplace', 'copy', 'connect', 'watch']);
+  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'copy:copycss', 'compass', 'cssmin', 'includereplace', 'copy:copylibs', 'connect', 'watch']);
 
 };
