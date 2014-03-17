@@ -86,7 +86,7 @@ module.exports = function(grunt) {
       },
       sass: {
         files: ['sass/*'],
-        tasks: ['sass', 'cssmin']
+        tasks: ['compass', 'cssmin']
       },
       css: {
         files: ['css/*'],
