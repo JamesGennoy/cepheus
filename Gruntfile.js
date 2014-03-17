@@ -66,7 +66,7 @@ module.exports = function(grunt) {
     },
     watch: {
       options: {
-        livereload: true,
+        livereload: true
       },
       html: {
         files: ['**/*.html', '!dist/**'],
