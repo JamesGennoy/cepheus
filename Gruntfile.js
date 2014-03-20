@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     concat: {
       js : {
         files: {
-          'dist/js/<%= pkg.name %>.js' : 'js/*.js'
+          'dist/js/<%= pkg.name %>.js' : 'src/js/*.js'
         }
       }
     },
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
       copycss: {
         files: [
           // CSS
-          {dest: 'dist/css/', src: 'css/*', expand: true, flatten: true}
+          {dest: 'dist/css/', src: 'src/css/*', expand: true, flatten: true}
         ]
       },
       copylibs: {
@@ -52,16 +52,18 @@ module.exports = function(grunt) {
     includereplace: {
       dist: {
         options: {
-          includesDir: 'includes/'
+          includesDir: 'src/includes/'
         },
-        src: '*.html',
-        dest: 'dist/'
+        files: [
+          {dest: 'dist/', src: ['**/*.html', '!includes/**'], expand: true, flatten: false, cwd: 'src/'},
+        ]
       }
     },
     compass: {
       sass: {
         options: {
-          cssDir: 'dist/css'
+          cssDir: 'dist/css',
+          sassDir: 'src/sass'
         }
       }
     },
@@ -77,19 +79,19 @@ module.exports = function(grunt) {
         livereload: true
       },
       html: {
-        files: ['**/*.html', '!dist/**'],
+        files: ['src/**/*.html'],
         tasks: ['includereplace']
       },
       js: {
-        files: ['js/<%= pkg.name %>/*.js'],
+        files: ['src/js/*.js'],
         tasks: ['concat', 'uglify']
       },
       sass: {
-        files: ['sass/*'],
+        files: ['src/sass/*'],
         tasks: ['compass', 'cssmin']
       },
       css: {
-        files: ['css/*'],
+        files: ['src/css/*'],
         tasks: ['copy:copycss', 'cssmin']
       }
     }
