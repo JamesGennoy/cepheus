@@ -1,5 +1,7 @@
 $my-top-padding: 50px;
+$my-background-color: #DDD;
 
 body {
+    background-color: $my-background-color;
 	padding-top: $my-top-padding;
 }

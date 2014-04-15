@@ -4,15 +4,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: ['dist'],
-    cssmin: {
-      cssmin: {
-        expand: true,
-        cwd: 'dist/css/',
-        src: ['*.css', '!*.min.css', '!bootstrap*.css'],
-        dest: 'dist/css/',
-        ext: '.min.css'
-      }
-    },
     concat: {
       js : {
         files: {
@@ -30,10 +21,10 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      copycss: {
+      copysrc: {
         files: [
-          // CSS
-          {dest: 'dist/css/', src: 'src/css/*', expand: true, flatten: true}
+          // Images
+          {dest: 'dist/img/', src: '**', cwd: 'src/img/', expand: true}
         ]
       },
       copylibs: {
@@ -52,25 +43,32 @@ module.exports = function(grunt) {
     includereplace: {
       dist: {
         options: {
-          includesDir: 'src/includes/'
+          includesDir: 'src/_includes/'
         },
         files: [
-          {dest: 'dist/', src: ['**/*.html', '!includes/**'], expand: true, flatten: false, cwd: 'src/'},
+          {dest: 'dist/', src: ['**/*.html', '!_includes/**'], expand: true, flatten: false, cwd: 'src/'},
         ]
       }
     },
     compass: {
-      sass: {
+      dist: {
         options: {
+          sassDir: 'src/sass',
           cssDir: 'dist/css',
-          sassDir: 'src/sass'
+          environment: 'production'
+        }
+      },
+      dev: {
+        options: {
+          sassDir: 'src/sass',
+          cssDir: 'dist/css'
         }
       }
     },
     uglify: {
       js: {
         files: {
-          'dist/js/<%= pkg.name %>.min.js' : 'dist/js/<%= pkg.name %>.js'
+          'dist/js/<%= pkg.name %>.js' : 'dist/js/<%= pkg.name %>.js'
         }
       }
     },
@@ -82,17 +80,17 @@ module.exports = function(grunt) {
         files: ['src/**/*.html'],
         tasks: ['includereplace']
       },
+      img: {
+        files: ['src/img/**'],
+        tasks: ['copy:copysrc']
+      },
       js: {
         files: ['src/js/*.js'],
         tasks: ['concat', 'uglify']
       },
       sass: {
         files: ['src/sass/*'],
-        tasks: ['compass', 'cssmin']
-      },
-      css: {
-        files: ['src/css/*'],
-        tasks: ['copy:copycss', 'cssmin']
+        tasks: ['compass:dev']
       }
     }
   });
@@ -103,12 +101,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-include-replace');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'copy:copycss', 'compass', 'cssmin', 'includereplace', 'copy:copylibs', 'connect', 'watch']);
+  grunt.registerTask('default', ['clean', 'concat', 'compass:dev', 'includereplace', 'copy', 'connect', 'watch']);
+  grunt.registerTask('production', ['clean', 'concat', 'uglify', 'compass:dist', 'includereplace', 'copy']);
 
 };
